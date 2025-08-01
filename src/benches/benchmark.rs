@@ -1,9 +1,9 @@
 #[macro_use]
 extern crate criterion;
 extern crate mft;
-
 use criterion::Criterion;
-use mft::{MftEntry, MftParser, ReadSeek};
+use mft::{MftEntry, MftParser};
+use winstructs::ReadSeek;
 
 fn process_1000_mft_records(sample: &[u8]) {
     let mut parser = MftParser::from_buffer(sample.to_vec()).unwrap();
@@ -14,6 +14,7 @@ fn process_1000_mft_records(sample: &[u8]) {
             count += 1;
         }
     }
+    assert!(count > 0, "No attributes found in the first 1000 records");
 }
 
 fn get_full_path(parser: &mut MftParser<impl ReadSeek>, entries: &[MftEntry]) {

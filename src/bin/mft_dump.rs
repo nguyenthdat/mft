@@ -2,14 +2,14 @@ use clap::{Arg, ArgAction, ArgMatches};
 use indoc::indoc;
 use log::Level;
 
+use mft::MftEntry;
 use mft::attribute::MftAttributeType;
 use mft::mft::MftParser;
-use mft::MftEntry;
 
 use dialoguer::Confirm;
 use mft::csv::FlatMftEntryWithName;
 
-use anyhow::{anyhow, Context, Error, Result};
+use anyhow::{Context, Error, Result, anyhow};
 use std::fs::File;
 use std::io::{Read, Seek, Write};
 use std::path::{Path, PathBuf};
@@ -149,7 +149,7 @@ impl MftDump {
             OutputFormat::from_str(output_format).expect("Validated with clap default values");
 
         if matches.get_flag("backtraces") {
-            std::env::set_var("RUST_LIB_BACKTRACE", "1");
+            unsafe { std::env::set_var("RUST_LIB_BACKTRACE", "1") };
         }
 
         let output: Option<Box<dyn Write>> = if let Some(path) = output_target {

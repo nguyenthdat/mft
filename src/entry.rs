@@ -8,8 +8,8 @@ use winstructs::ntfs::mft_reference::MftReference;
 use byteorder::{LittleEndian, ReadBytesExt};
 
 use bitflags::bitflags;
-use serde::ser::{self, SerializeStruct, Serializer};
 use serde::Serialize;
+use serde::ser::{self, SerializeStruct, Serializer};
 
 use crate::attribute::header::{MftAttributeHeader, ResidentialHeader};
 use crate::attribute::x30::{FileNameAttr, FileNamespace};
@@ -83,6 +83,7 @@ pub struct EntryHeader {
     pub record_number: u64,
 }
 bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct EntryFlags: u16 {
         const ALLOCATED             = 0x01;
         const INDEX_PRESENT         = 0x02;
