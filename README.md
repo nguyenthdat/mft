@@ -2,7 +2,7 @@
 ![crates.io](https://img.shields.io/crates/v/mft.svg)
 
 # MFT
- 
+
 This is a parser for the MFT (master file table) format.
 
 MSRV is latest stable rust.
@@ -12,33 +12,38 @@ MSRV is latest stable rust.
 Python bindings are available as well at https://github.com/omerbenamram/pymft-rs (and at PyPi https://pypi.org/project/mft/)
 
 ## Features
- - Implemented using 100% safe rust - and works on all platforms supported by rust (that have stdlib).
- - Supports JSON and CSV outputs.
- - Supports extracting resident data streams.
+
+- Implemented using 100% safe rust - and works on all platforms supported by rust (that have stdlib).
+- Supports JSON and CSV outputs.
+- Supports extracting resident data streams.
 
 ## Installation (associated binary utility):
-  - Download latest executable release from https://github.com/omerbenamram/mft/releases
-    - Releases are automatically built for for Windows, macOS, and Linux. (64-bit executables only)
-  - Build from sources using  `cargo install mft`
-  
+
+- Download latest executable release from https://github.com/omerbenamram/mft/releases
+  - Releases are automatically built for for Windows, macOS, and Linux. (64-bit executables only)
+- Build from sources using `cargo install mft`
+
 # `mft_dump` (Binary utility):
+
 The main binary utility provided with this crate is `mft_dump`, and it provides a quick way to convert mft snapshots to different output formats.
 
 Some examples
-  - `mft_dump <input_file>` will dump contents of mft entries as JSON.
-  - `mft_dump -o csv <input_file>` will dump contents of mft entries as CSV. 
-  - `mft_dump --extract-resident-streams <output_directory> -o json <input_file>` will extract all resident streams in MFT to files in <output_directory>.
+
+- `mft_dump <input_file>` will dump contents of mft entries as JSON.
+- `mft_dump -o csv <input_file>` will dump contents of mft entries as CSV.
+- `mft_dump --extract-resident-streams <output_directory> -o json <input_file>` will extract all resident streams in MFT to files in <output_directory>.
 
 # Library usage:
+
 ```rust,no_run
 use mft::MftParser;
 use mft::attribute::MftAttributeContent;
 use std::path::PathBuf;
 
 fn main() {
-    // Change this to a path of your MFT sample. 
-    let fp = PathBuf::from(format!("{}/samples/MFT", std::env::var("CARGO_MANIFEST_DIR").unwrap())); 
-    
+    // Change this to a path of your MFT sample.
+    let fp = PathBuf::from(format!("{}/samples/MFT", std::env::var("CARGO_MANIFEST_DIR").unwrap()));
+
     let mut parser = MftParser::from_path(fp).unwrap();
     for entry in parser.iter_entries() {
         match entry {
@@ -46,16 +51,16 @@ fn main() {
                 for attribute in e.iter_attributes().filter_map(|attr| attr.ok()) {
                     match attribute.data {
                         MftAttributeContent::AttrX10(standard_info) => {
-                            println!("\tX10 attribute: {:#?}", standard_info)         
+                            println!("\tX10 attribute: {:#?}", standard_info)
                         },
                         MftAttributeContent::AttrX30(filename_attribute) => {
-                            println!("\tX30 attribute: {:#?}", filename_attribute)         
+                            println!("\tX30 attribute: {:#?}", filename_attribute)
                         },
                         _ => {
                             println!("\tSome other attribute: {:#?}", attribute)
                         }
                     }
-                   
+
                 }
             }
             Err(err) => eprintln!("{}", err),
@@ -65,6 +70,7 @@ fn main() {
 ```
 
 ## Thanks/Resources:
- - https://docs.microsoft.com/en-us/windows/desktop/DevNotes/master-file-table
- - https://github.com/libyal/libfsntfs/blob/master/documentation/New%20Technologies%20File%20System%20(NTFS).asciidoc
- - https://github.com/forensicmatt/RustyMft
+
+- https://docs.microsoft.com/en-us/windows/desktop/DevNotes/master-file-table
+- https://github.com/libyal/libfsntfs/blob/master/documentation/New%20Technologies%20File%20System%20(NTFS).asciidoc
+- https://github.com/forensicmatt/RustyMft

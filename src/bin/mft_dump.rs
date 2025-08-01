@@ -233,7 +233,7 @@ impl MftDump {
         if p.exists() {
             if prompt {
                 match Confirm::new()
-                    .with_prompt(&format!(
+                    .with_prompt(format!(
                         "Are you sure you want to override output file at {}",
                         p.display()
                     ))
@@ -306,13 +306,13 @@ impl MftDump {
                     _ => entry,
                 },
                 Err(error) => {
-                    eprintln!("{}", error);
+                    eprintln!("{error}");
                     continue;
                 }
             };
 
-            if let Some(data_streams_dir) = &self.data_streams_output {
-                if let Ok(Some(path)) = parser.get_full_path_for_entry(&entry) {
+            if let Some(data_streams_dir) = &self.data_streams_output
+                && let Ok(Some(path)) = parser.get_full_path_for_entry(&entry) {
                     let sanitized_path = sanitized(&path.to_string_lossy());
 
                     for (i, (name, stream)) in entry
@@ -340,11 +340,7 @@ impl MftDump {
 
                         let truncated: String = orig_path_component.chars().take(150).collect();
                         let data_stream_path = format!(
-                            "{path}__{random}_{stream_number}_{stream_name}.dontrun",
-                            path = truncated,
-                            random = rando_string,
-                            stream_number = i,
-                            stream_name = name
+                            "{truncated}__{rando_string}_{i}_{name}.dontrun"
                         );
 
                         if PathBuf::from(&data_stream_path).exists() {
@@ -359,7 +355,6 @@ impl MftDump {
                         f.write_all(stream.data())?;
                     }
                 }
-            }
 
             match self.output_format {
                 OutputFormat::JSON | OutputFormat::JSONL => self.print_json_entry(&entry)?,
@@ -384,7 +379,7 @@ impl MftDump {
                 io::stderr(),
             ) {
                 Ok(_) => {}
-                Err(e) => eprintln!("Failed to initialize logging: {}", e),
+                Err(e) => eprintln!("Failed to initialize logging: {e}"),
             };
         }
     }
@@ -427,7 +422,7 @@ fn to_hex_string(bytes: &[u8]) -> String {
     let mut s = String::with_capacity(len * 2);
 
     for byte in bytes {
-        write!(s, "{:02X}", byte).expect("Writing to an allocated string cannot fail");
+        write!(s, "{byte:02X}").expect("Writing to an allocated string cannot fail");
     }
 
     s
